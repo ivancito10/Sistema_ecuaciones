@@ -90,7 +90,10 @@
               }
               break;
             case "2":
-              document.getElementById("resolucionsistema").innerHTML+="<br>ESTOY SOLUCIONANDO POR SEIDEL";
+            seidel(matrixa, matrixb, tol);
+              if(filas.value==3){
+                graficar(variabley1, variablez1, variableb1);
+              }
               break;
             case "3":
                 document.getElementById("resolucionsistema").innerHTML+="<br>ESTOY SOLUCIONANDO POR LU";
@@ -188,7 +191,61 @@
           }
 
         }
+      
+      function seidel(matrixa, matrixb, tol) {
+          a = matrixa.slice();
+          m = zeros(matrixa);
+          b = matrixb.slice();
+          c = [];
+          for(var i=0; i<filas.value; i++) {
+            for(var j=0; j<filas.value; j++) {
+              if(i!=j){
+                m[i][j] = -a[i][j]/a[i][i];
+              }
+            }
+            c.push(b[0][i]/a[i][i]);
+          }
+          console.log(m);
+          nro_ite = 0
+          error = [];
+          x = zeros(matrixb);
+          x0 = zeros(matrixb);
+          sw=true;  
 
+          while(sw) {
+            x1 = zeros(matrixb);
+            suma = 0;
+
+            for(var i=0; i<filas.value; i++) {
+              for(var j=0; j<filas.value; j++) {
+                suma = suma + m[i][j]*x[0][j];
+              }
+              suma = suma + c[i];
+              x1[0][i]=suma;
+              x[0][i]=suma;
+              suma = 0;
+              error[i] = Math.abs(x1[0][i] - x0[0][i])  
+            }
+
+            max_error = 0;
+            for(var i=0; i<filas.value; i++) {
+              if(error[i]>max_error){
+                max_error = error[i];
+              } 
+            }
+            if(max_error<tol) {
+              sw=false;
+            }
+            x0 = x1.slice();
+            
+            document.getElementById("resolucionsistema").innerHTML+=nro_ite;
+            for(var i=0; i<filas.value; i++)
+              document.getElementById("resolucionsistema").innerHTML+="&nbsp&nbsp&nbsp&nbsp&nbsp&nbspx"+(i+1)+": "+x[0][i] ;
+            document.getElementById("resolucionsistema").innerHTML+="<br>";
+            nro_ite = nro_ite +1  ;
+          }
+
+        }
         const zeros = (input) => {
           let result = [];
           input.forEach((row, i) => {
